@@ -37,7 +37,26 @@ function addReference() {
 
 function doit() {
   download(document.title + ".md", quote(getSelectionText()) + addReference());
+  removeMarkdownloadButton();
 }
 
-// When embedded, trigger this automatically
-doit()
+function markdownloadListener(e) {
+  if (getSelectionText() != "") {
+    document.body.insertAdjacentHTML('beforeend', '<a id="markdownloadbutton" style="background: white; padding: 5px; position: absolute; left: ' + e.pageX + 'px; top: ' + e.pageY + 'px;" href="javascript:doit()">MDL</a>');
+  }
+}
+
+function removeMarkdownloadButton() {
+  // Remove possibly existing button
+  var element = document.getElementById('markdownloadbutton');
+  if (element != null) {
+    element.parentNode.removeChild(element);
+  }
+}
+
+// Register selection event listener
+document.addEventListener("selectionchange", function(e) {
+  document.removeEventListener("mouseup", markdownloadListener);
+  removeMarkdownloadButton();
+  document.addEventListener("mouseup", markdownloadListener);
+});
